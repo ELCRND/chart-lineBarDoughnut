@@ -10,32 +10,32 @@ export const BAR_CHART_CONFIG = {
     labels: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
     datasets: [
       {
-        label: "Набор 1",
+        label: "name1",
         data: [2000, 1000, 4000, 2500, 7100, 5900, 6800], // каждый первый день
         color: CHART_COLORS.purple,
       },
       {
-        label: "Набор 2",
+        label: "name2",
         data: [6500, 4700, 500, 8000, 5500, 6200, 5300], // каждый второй день
         color: CHART_COLORS.yellow,
       },
       {
-        label: "Набор 3",
+        label: "name3",
         data: [7500, 9000, 5000, 9000, 4900, 4500, 5100],
         color: CHART_COLORS.pink,
       },
       {
-        label: "Набор 4",
+        label: "name4",
         data: [1000, 3100, 6000, 800, 4100, 3700, 4200],
         color: CHART_COLORS.green,
       },
       {
-        label: "Набор 5",
+        label: "name5",
         data: [8500, 6000, 10000, 7500, 3200, 2900, 3500],
         color: CHART_COLORS.blue,
       },
       {
-        label: "Набор 6",
+        label: "name6",
         data: [5500, 4000, 3000, 3500, 2400, 2100, 2700],
         color: CHART_COLORS.lightBlue,
       },
@@ -56,10 +56,14 @@ export const BAR_CHART_CONFIG = {
   },
 };
 
+BAR_CHART_CONFIG.scaleY.max = Math.max(
+  ...BAR_CHART_CONFIG.data.datasets.flatMap((dataset) => dataset.data)
+);
+
 export function initialBarChart(canvasId = "chart-bar") {
   const canvas = document.getElementById(canvasId);
   if (!canvas) {
-    console.error(`Canvas element with id '${canvasId}' not found`);
+    console.error(`Отсутвует canvas с id ${canvasId}`);
     return null;
   }
 
@@ -102,10 +106,11 @@ export function initialBarChart(canvasId = "chart-bar") {
             size: 16,
             weight: "bold",
           },
+          titleAlign: "center",
           bodyAlign: "center",
           callbacks: {
-            title: function () {
-              return "";
+            title: function (context) {
+              return context[0].dataset.label;
             },
             label: function (context) {
               return "$" + context.parsed.y;

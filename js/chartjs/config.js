@@ -1,4 +1,3 @@
-// chart-config.js - общие настройки для всех графиков
 export const CHART_COLORS = {
   white: "#fff",
   green: "#4BD158",
@@ -29,7 +28,7 @@ export const GRID_SETTINGS = {
   color: "#363636",
 };
 
-// Общий плагин для градиентного тултипа
+// плагин для тултипа
 export const gradientTooltipPlugin = {
   id: "gradientTooltip",
   beforeDraw: function (chart) {

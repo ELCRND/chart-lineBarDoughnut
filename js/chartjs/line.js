@@ -5,7 +5,7 @@ import {
   gradientTooltipPlugin,
 } from "./config.js";
 
-// Плагин для вертикальной линии при наведении
+// плагин для вертикальной линии при наведении
 const verticalLinePlugin = {
   id: "verticalLinePlugin",
   beforeDatasetsDraw: function (chart) {
@@ -38,7 +38,7 @@ const verticalLinePlugin = {
   },
 };
 
-// Создание градиента для заливки
+// градиент линии графика
 function createGradient(ctx, chartArea) {
   const gradient = ctx.createLinearGradient(
     0,
@@ -54,21 +54,20 @@ function createGradient(ctx, chartArea) {
   return gradient;
 }
 
-// Форматирование месяцев
+// форматирование месяцев
 function formatMonthLabels(dates) {
   const monthLabels = dates.map((date) => {
     const d = new Date(date);
     return d.toLocaleString("ru", { month: "short" });
   });
 
+  // убирает дублирующиеся названия месяцев
   return monthLabels.map((month, index, array) => {
     return index === 0 || month !== array[index - 1] ? month : "";
   });
 }
 
-// Конфигурация линейного графика
 export const LINE_CHART_CONFIG = {
-  // Данные графика (легко изменить)
   data: {
     labels: [
       "2024-05-05",
@@ -91,31 +90,36 @@ export const LINE_CHART_CONFIG = {
     ],
   },
 
-  // Настройки отображения
   display: {
     lineColor: CHART_COLORS.green,
-    tension: 0.25,
+    tension: 0.25, // сглаживание перепадов на линии графика
     pointRadius: 0,
     pointHoverRadius: 6,
-    pointHoverColor: "#000",
+    pointHoverColor: "#000", // цвет точки при наведении
     pointHoverBorderColor: "#FFFFFF",
   },
 
-  // Настройки шкалы Y
+  // шкала Y
   scaleY: {
     min: 75000,
     max: 200000,
     stepSize: 25000,
-    allowedValues: [100000, 125000, 150000, 200000],
+    allowedValues: [100000, 125000, 150000, 200000], // отображаются только эти значения, можно удалить
     format: (value) => value / 1000 + "k",
   },
 };
 
-// Инициализация линейного графика
+// const maxValueFromData = Math.max(...LINE_CHART_CONFIG.data.values);
+
+// if (LINE_CHART_CONFIG.scaleY.max < maxValueFromData) {
+//   LINE_CHART_CONFIG.scaleY.max = maxValueFromData;
+//   LINE_CHART_CONFIG.scaleY.allowedValues = null;
+// }
+
 export function initialLineChart(canvasId = "chart-line") {
   const canvas = document.getElementById(canvasId);
   if (!canvas) {
-    console.error(`Canvas element with id '${canvasId}' not found`);
+    console.error(`Отсутвует canvas с id ${canvasId}`);
     return null;
   }
 
@@ -157,10 +161,15 @@ export function initialLineChart(canvasId = "chart-line") {
           max: LINE_CHART_CONFIG.scaleY.max,
           ticks: {
             callback: function (value) {
-              if (LINE_CHART_CONFIG.scaleY.allowedValues.includes(value)) {
+              const allowedValues = LINE_CHART_CONFIG.scaleY.allowedValues;
+
+              if (!allowedValues) {
                 return LINE_CHART_CONFIG.scaleY.format(value);
+              } else if (allowedValues.includes(value)) {
+                return LINE_CHART_CONFIG.scaleY.format(value);
+              } else {
+                return null;
               }
-              return null;
             },
             stepSize: LINE_CHART_CONFIG.scaleY.stepSize,
             color: CHART_COLORS.white,
